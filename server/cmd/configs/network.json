@@ -2,39 +2,11 @@
     "http": {
         "domain": "example.com",
         "address": "0.0.0.0:9000",
-        "tls": {
-            "use": false,
-            "privateKey": "private.key",
-            "certificate": "cert.crt"
-        },
         "assets": {
             "static": "../../client",
             "favicon": "../../client/img/favicon.ico",
             "html": "../../client/html"
         },
-        "recaptcha": {
-            "use": true,
-            "privateKey": "",
-            "publicKey": ""
-        },
-        "sessions": {
-            "privateKey": ""
-        },
         "logRequests": false
-    },
-    "database": {
-        "mongo": {
-            "address": "mongodb://127.0.0.1:27017/app",
-            "auth": false,
-            "username": "",
-            "password": "",
-            "mechanism": "SCRAM-SHA-1",
-            "source": "admin"
-        }
-    },
-    "sessionStore": {
-        "redis": {
-            "address": "127.0.0.1:6379"
-        }
     }
 }

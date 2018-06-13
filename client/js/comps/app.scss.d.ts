@@ -1,1 +1,1 @@
-export const drawboard: string;
+export const deleteMe: string;

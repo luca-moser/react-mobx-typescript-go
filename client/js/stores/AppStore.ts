@@ -1,17 +1,17 @@
-import {action, observable} from 'mobx';
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
-}
+import {action, observable, runInAction} from 'mobx';
 
 export class ApplicationStore {
-    @observable color = "#000000";
+    @observable runningSince = 0;
+    timerID;
 
-    @action
-    updateColor = (color: string) => {
-        this.color = color;
+    constructor() {
+        this.timerID = setInterval(() => {
+            runInAction(this.updateTimer);
+        }, 1000);
+    }
+
+    updateTimer = () => {
+        this.runningSince++;
     }
 }
 

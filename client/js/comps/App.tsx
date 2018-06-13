@@ -5,7 +5,6 @@ import {ApplicationStore} from '../stores/AppStore';
 import DevTools from 'mobx-react-devtools';
 
 import * as css from './app.scss';
-import * as canvas from './canvas';
 
 interface Props {
     appStore: ApplicationStore;
@@ -14,28 +13,13 @@ interface Props {
 @inject("appStore")
 @observer
 export class App extends React.Component<Props, {}> {
-    componentDidMount() {
-        this.drawCanvas();
-    }
-
-    updateColor = (e: any) => {
-        this.props.appStore.updateColor(e.target.value);
-        canvas.changeBallColor(e.target.value);
-    }
-
-    drawCanvas = () => {
-        canvas.setup((this.refs.canvas as HTMLCanvasElement));
-    }
+    componentDidMount() {}
 
     render() {
-        const {color} = this.props.appStore;
+        const {runningSince} = this.props.appStore;
         return (
             <div>
-                <div className={css.drawboard}>
-                    <input type="color" onChange={this.updateColor} value={color}/>
-                    <canvas ref={"canvas"}>
-                    </canvas>
-                </div>
+                <div className={css.deleteMe}>App is running since {runningSince} second(s)</div>
                 {__DEVELOPMENT__ ? <DevTools/> : <span></span>}
             </div>
         );

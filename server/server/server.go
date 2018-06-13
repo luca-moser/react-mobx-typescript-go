@@ -47,17 +47,6 @@ func (server *Server) Start() {
 	}
 	logger.Info("booting up app...")
 
-	// connect to mongo
-	mongo, err := connectMongoDB(server.Config.Net.Database.Mongo)
-	if err != nil {
-		panic(err)
-	}
-	if err = mongo.Ping(); err != nil {
-		panic(err)
-	}
-	server.Mongo = mongo
-	logger.Info("connection to MongoDB established")
-
 	// init web server
 	e := echo.New()
 	e.HideBanner = true
@@ -94,13 +83,11 @@ func (server *Server) Start() {
 	// add various objects to the graph
 	if err = g.Provide(
 		&inject.Object{Value: e},
-		&inject.Object{Value: mongo},
 		&inject.Object{Value: appConfig.Dev, Name: "dev"},
-		&inject.Object{Value: httpConfig.ReCaptcha.PublicKey, Name: "recaptchaPublicKey"},
-		&inject.Object{Value: httpConfig.ReCaptcha.Use, Name: "useRecaptcha"},
 	); err != nil {
 		panic(err)
 	}
+
 	// add controllers to graph
 	for _, controller := range controllers {
 		if err = g.Provide(&inject.Object{Value: controller}); err != nil {
@@ -146,29 +133,4 @@ func (server *Server) Shutdown(timeout time.Duration) {
 	select {
 	case <-time.After(timeout):
 	}
-}
-
-func connectMongoDB(config config.MongoDBConfig) (*mgo.Session, error) {
-	var session *mgo.Session
-	var err error
-	if config.Auth {
-		cred := &mgo.Credential{
-			Username:  config.Username,
-			Password:  config.Password,
-			Mechanism: config.Mechanism,
-			Source:    config.Source,
-		}
-		session, err = mgo.Dial(config.Address)
-		if err = session.Login(cred); err != nil {
-			return nil, err
-		}
-	} else {
-		session, err = mgo.Dial(config.Address)
-	}
-	if err != nil {
-		panic(err)
-	}
-	session.SetMode(mgo.Monotonic, true)
-	session.SetSafe(&mgo.Safe{})
-	return session, nil
 }

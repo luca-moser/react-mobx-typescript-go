@@ -9,14 +9,14 @@ import (
 
 type Config interface{}
 
-var subconfigs = []Config{&AppConfig{}, &NetConfig{}}
+var subConfigs = []Config{&AppConfig{}, &NetConfig{}}
 
 func LoadConfig() *Configuration {
 	configuration := &Configuration{}
 	refConfig := reflect.Indirect(reflect.ValueOf(configuration))
 
 	// go through each sub config, load it and init it on the main struct
-	for _, c := range subconfigs {
+	for _, c := range subConfigs {
 		// indirect as 'c' is pointer to struct
 		ind := reflect.Indirect(reflect.ValueOf(c))
 		ty := ind.Type()
@@ -54,63 +54,15 @@ type AppConfig struct {
 type NetConfig struct {
 	Location     interface{} `loc:"./configs/network.json"`
 	HTTP         WebConfig
-	LDAP         LDAPConfig
-	Database     DatabaseConfig
-	SessionStore SessionStoreConfig
 }
 
 type WebConfig struct {
 	Domain  string
 	Address string
-	TLS struct {
-		Use         bool
-		PrivateKey  string
-		Certificate string
-	}
 	Assets struct {
 		Static  string
 		HTML    string
 		Favicon string
 	}
-	ReCaptcha struct {
-		Use        bool
-		PrivateKey string
-		PublicKey  string
-	}
-	Sessions struct {
-		PrivateKey string
-	}
 	LogRequests bool
-}
-
-type LDAPConfig struct {
-	Address  string
-	Port     int
-	User     string
-	Password string
-	Domain   string
-	Base     string
-	GroupOU  string
-	UserOUs  []string
-}
-
-type DatabaseConfig struct {
-	Mongo MongoDBConfig
-}
-
-type MongoDBConfig struct {
-	Address   string
-	Auth      bool
-	Username  string
-	Password  string
-	Mechanism string
-	Source    string
-}
-
-type SessionStoreConfig struct {
-	Redis RedisConfig
-}
-
-type RedisConfig struct {
-	Address string
 }

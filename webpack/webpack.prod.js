@@ -1,40 +1,30 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const Autoprefixer = require('autoprefixer');
 const path = require('path');
 
 module.exports = env => {
     const removeEmpty = array => array.filter(p => !!p);
 
-    const NODE_ENV = env.prod ? 'production' : 'development';
+    const NODE_ENV = 'production' ;
 
     return {
-        mode: 'development',
-        devtool: 'source-map',
+        mode: 'production',
         entry: {
-            app: removeEmpty([
-                'react-hot-loader/patch',
-                'webpack-dev-server/client?http://localhost:3000',
-                'webpack/hot/only-dev-server',
-                path.join(__dirname, '../client/js/entry.tsx')
-            ])
+            app: path.join(__dirname, '../client/js/entry.tsx')
         },
 
         resolve: {
-            modules: [
-                'node_modules',
-                path.resolve(__dirname, '..', 'client')
-            ],
+            //modules: ['node_modules'],
             extensions: ['.ts', '.tsx', '.js', '.json', '.scss'],
         },
 
         output: {
             filename: '[name].js',
-            sourceMapFilename: '[name].map.js',
             path: path.join(__dirname, '../client/js'),
-            publicPath: 'http://127.0.0.1:3000/'
+            publicPath: '/assets/js'
         },
 
         module: {
@@ -71,9 +61,10 @@ module.exports = env => {
         },
 
         plugins: removeEmpty([
+            new UglifyJSPlugin({}),
             new webpack.LoaderOptionsPlugin({
-                minimize: env.prod,
-                debug: env.dev,
+                minimize: true,
+                debug: false,
                 options: {
                     context: __dirname,
                     postcss: [Autoprefixer({browsers: ['last 3 versions']})],
@@ -92,8 +83,8 @@ module.exports = env => {
             }),
 
             new webpack.DefinePlugin({
-                __DEVELOPMENT__: Boolean(NODE_ENV === "development"),
-                'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+                __DEVELOPMENT__: Boolean(false),
+                'process.env.NODE_ENV': JSON.stringify('production'),
             }),
         ]),
     };
